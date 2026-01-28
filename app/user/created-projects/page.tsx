@@ -44,7 +44,7 @@ const page = () => {
 
                             <div className='flex w-[calc(100vw-110px)]  md:flex-row flex-col md:w-full md:justify-between md:items-center border-b pb-8'>
                                 <div className='flex flex-col w-fit'>
-                                    <h2 className='text-2xl font-bold'>Redeem Offer</h2>
+                                    <h2 className='text-2xl font-bold'>Created Projects</h2>
                                     <p>Redeem your star points for exciting offers!</p>
                                 </div>
                                 <Select>

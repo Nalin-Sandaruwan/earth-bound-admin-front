@@ -13,6 +13,8 @@ import {
 import Headder from '@/components/dashbord/headder'
 import DashNavi from '@/components/dashbord/dashNavi'
 import HistoryCard from '@/components/histry compo/historycard'
+import { Button } from '@/components/ui/button'
+import ViewChart from '@/components/earnning/viewchart'
 
 
 
@@ -35,8 +37,19 @@ const page = () => {
 
           <div className='flex flex-col border-l p-6 font-raleway justify-between'>
             <div className='flex  flex-col '>
-              <h2 className='text-2xl font-bold'>Your Donation History</h2>
-              <p>Redeem your star points for exciting offers!</p>
+              <div className='flex  flex-row justify-between items-center '>
+                <div className='flex flex-col'>
+                  <h2 className='text-2xl font-bold'>Donations</h2>
+                  <p>Donations</p>
+                </div>
+
+                <ViewChart/>
+                
+              </div>
+
+              <div>
+
+              </div>
               {/* Add your redeem offer content here */}
               <div className='w-full md:grid-cols-3 grid-cols-1 grid gap-4 my-6'>
                 <HistoryCard />
