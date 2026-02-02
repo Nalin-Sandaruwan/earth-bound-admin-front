@@ -26,8 +26,8 @@ const userNavigation = [
     },
     {
         id: 4,
-        label: 'Profile Details',
-        path: '/user/edit-profile',
+        label: 'Users Details',
+        path: '/user/users',
         icon: UserPen
     },
     

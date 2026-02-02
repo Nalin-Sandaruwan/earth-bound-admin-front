@@ -9,12 +9,39 @@ import {
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 
+import { useLogin } from "@/lib/hooks/auth"
+import { useState } from "react"
+
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"form">) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const {data, isPending, mutate} = useLogin();
+
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError(null);
+    mutate(
+      { email, password },
+      
+      {
+         onSuccess:()=>{
+          // Handle successful login, e.g., redirect or show a message
+          console.log("Login successful", data);
+        },
+
+        onError: (err: any) => {
+          setError(err?.message || "Login failed");
+        },
+      }
+    );
+  };
+
   return (
-    <form className={cn("flex flex-col gap-6", className)} {...props}>
+    <form className={cn("flex flex-col gap-6", className)} {...props} onSubmit={handleLogin}>
       <FieldGroup>
         <div className="flex flex-col items-center gap-1 text-center">
           <h1 className="text-2xl font-bold">Login to your account</h1>
@@ -24,7 +51,15 @@ export function LoginForm({
         </div>
         <Field>
           <FieldLabel htmlFor="email">Email</FieldLabel>
-          <Input id="email" type="email" placeholder="m@example.com" required />
+          <Input
+            id="email"
+            type="email"
+            placeholder="m@example.com"
+            required
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            autoComplete="email"
+          />
         </Field>
         <Field>
           <div className="flex items-center">
@@ -36,10 +71,20 @@ export function LoginForm({
               Forgot your password?
             </a>
           </div>
-          <Input id="password" type="password" required />
+          <Input
+            id="password"
+            type="password"
+            required
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            autoComplete="current-password"
+          />
         </Field>
+        {error && (
+          <div className="text-red-500 text-sm text-center">{error}</div>
+        )}
         <Field>
-          <Button type="submit">Login</Button>
+          <Button type="submit" disabled={isPending}>{isPending ? "Logging in..." : "Login"}</Button>
         </Field>
         {/* <FieldSeparator>Or continue with</FieldSeparator> */}
       </FieldGroup>
