@@ -20,10 +20,9 @@ const ViewChart = () => {
                 </DialogTrigger>
                 <DialogContent showCloseButton={false}>
                     <DialogHeader>
-                        <DialogTitle>No Close Button</DialogTitle>
+                        {/* <DialogTitle>Earnning Stats</DialogTitle> */}
                         <DialogDescription>
-                            This dialog doesn&apos;t have a close button in the top-right
-                            corner.
+                            
                             <ChartAreaInteractive/>
                         </DialogDescription>
                     </DialogHeader>

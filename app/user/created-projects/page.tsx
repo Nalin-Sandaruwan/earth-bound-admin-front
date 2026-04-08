@@ -1,4 +1,7 @@
-import React from 'react'
+'use client';
+
+import React, { useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import {
     Pagination,
     PaginationContent,
@@ -20,10 +23,33 @@ import {
 import Headder from '@/components/dashbord/headder'
 import Offercomp from '@/components/offer compo/offercomp'
 import DashNavi from '@/components/dashbord/dashNavi'
-import Tabel from '@/components/tabel/tabel'
+import axiosClient from '@/lib/api/axios-client'
+import { Spinner } from '@/components/ui/spinner';
+import Tabel from '@/components/tabel/tabel';
 
+
+
+const ENDPOINTS: Record<string, string> = {
+    "All project": "/api/csr-project",
+    "Not Approved": "/api/csr-project/status/deactivated",
+    "Approved": "/api/csr-project/status/activated",
+}
+
+const fetchProjects = async (type: string) => {
+    const endpoint = ENDPOINTS[type] || ENDPOINTS["All project"]
+    const res = await axiosClient.get(endpoint)
+    return res.data
+}
 
 const page = () => {
+    const [selectedType, setSelectedType] = useState<string>("All project")
+
+    const { data, isLoading, error } = useQuery({
+        queryKey: ['projects', selectedType],
+        queryFn: () => fetchProjects(selectedType),
+        // keepPreviousData: true,
+    })
+
     return (
         <div>
 
@@ -47,7 +73,7 @@ const page = () => {
                                     <h2 className='text-2xl font-bold'>Created Projects</h2>
                                     <p>Redeem your star points for exciting offers!</p>
                                 </div>
-                                <Select>
+                                <Select value={selectedType} onValueChange={setSelectedType}>
                                     <SelectTrigger className="w-[200px]">
                                         <SelectValue placeholder="Select Project Type" />
                                     </SelectTrigger>
@@ -63,7 +89,10 @@ const page = () => {
                             {/* projects show case with with tabele */}
                             <div className='w-[calc(100vw-110px)] md:w-full overflow-x-auto pb-2'>
                                 <div className='min-w-[800px]'>
-                                    <Tabel/>
+                                    {/* {JSON.stringify(data)} */}
+                                    {isLoading && <div className='flex w-full h-[500px] justify-center items-center'><Spinner/></div>}
+                                    {error && <div>Error loading projects</div>}
+                                    {!isLoading && !error && <Tabel data={data} />}
                                 </div>
                             </div>
                            

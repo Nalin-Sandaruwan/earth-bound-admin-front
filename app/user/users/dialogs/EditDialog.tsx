@@ -1,7 +1,11 @@
-import { Button } from '../ui/button'
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog'
-import { Input } from '../ui/input'
-import { Label } from '../ui/label'
+import { Button } from "@/components/ui/button"
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { DialogTrigger } from "@radix-ui/react-dialog"
+
+
+
 
 interface EditDialogProps {
     open: boolean
@@ -14,7 +18,7 @@ interface EditDialogProps {
 
 export function Edit({ open, onOpenChange, project, date, status, description }: EditDialogProps) {
     return (
-        <Dialog open = {open} onOpenChange={onOpenChange}>
+        <Dialog open={open} onOpenChange={onOpenChange}>
             <form>
                 <DialogTrigger asChild>
                     <Button variant="outline">Open Dialog</Button>

@@ -1,5 +1,3 @@
-"use client";
-
 import React from 'react'
 import { Button } from "@/components/ui/button"
 
@@ -25,14 +23,12 @@ import {
 import { MoreHorizontalIcon } from "lucide-react"
 import Tabeldata from './tabeldata'
 
-
 interface TabelProps {
     data?: any;
 }
 
 const Tabel = ( { data } : TabelProps) => {
 
-    
     const projectsData = [
         {
             id: "1",
@@ -70,37 +66,28 @@ const Tabel = ( { data } : TabelProps) => {
             earning: "$120.00",
         },
     ]
-   
     return (
         <div>
             {/* 10 items can getting that  */}
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <TableHead>Project</TableHead>
-                        <TableHead>Date</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Description</TableHead>
-                        <TableHead>Project Date</TableHead>
+                        <TableHead>Email</TableHead>
+                        <TableHead>Role</TableHead>
+                        <TableHead>IsActive</TableHead>
+                        {/* <TableHead>Readeem Points</TableHead> */}
+                        {/* <TableHead>Project Date</TableHead> */}
                         <TableHead>View More</TableHead>
                         <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
-                </TableHeader> 
+                </TableHeader>
                 <TableBody>
-                    {data?.map((project: any, idx: number) => (
-                        <Tabeldata
-                            key={project.id ?? `${project.name}-${idx}`}
-                            id= {project.id}
-                            project={project.name}
-                            date={project.endDate}
-                            status={project.isApproved}
-                            description={project.description}
-                            location={project.location}
-                        />
+                    {data?.map((users: any) => (
+
+                        <Tabeldata key={users._id} id={users._id} email={users.email} role={users.role}  isActive={users.isActive}  />
                     ))}
                 </TableBody>
             </Table>
-            {/* <Button onClick={handleUpdate}>Update Project</Button> */}
         </div>
     )
 }

@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
+import { DollarSign, Gift, Calendar } from "lucide-react"
 
 import {
     Card,
@@ -25,6 +26,8 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
+import { useStat } from "@/lib/hooks/useStat"
+import { Spinner } from "../ui/spinner"
 
 export const description = "An interactive area chart"
 
@@ -126,12 +129,12 @@ const chartConfig = {
     visitors: {
         label: "Visitors",
     },
-    desktop: {
-        label: "Desktop",
+    donations: {
+        label: "Donations",
         color: "var(--chart-1)",
     },
-    mobile: {
-        label: "Mobile",
+    offerRedemptions: {
+        label: "Offer Redemptions",
         color: "var(--chart-2)",
     },
 } satisfies ChartConfig
@@ -139,27 +142,102 @@ const chartConfig = {
 export function ChartAreaInteractive() {
     const [timeRange, setTimeRange] = React.useState("90d")
 
-    const filteredData = chartData.filter((item) => {
+    const { data, isLoading, error } = useStat();
+
+    // Debug logging
+    React.useEffect(() => {
+        console.log("Chart data:", data);
+        console.log("Is loading:", isLoading);
+        console.log("Error:", error);
+    }, [data, isLoading, error]);
+
+    // Use API data if available, otherwise fallback to empty array
+    const chartDataFromAPI = data?.data || []
+
+    // Get the most recent date from the data instead of using "now"
+    const mostRecentDate = chartDataFromAPI.length > 0 
+        ? new Date(Math.max(...chartDataFromAPI.map((item: any) => new Date(item.date).getTime())))
+        : new Date()
+
+    const filteredData = chartDataFromAPI.filter((item: any) => {
         const date = new Date(item.date)
-        const referenceDate = new Date("2024-06-30")
         let daysToSubtract = 90
         if (timeRange === "30d") {
             daysToSubtract = 30
         } else if (timeRange === "7d") {
             daysToSubtract = 7
         }
-        const startDate = new Date(referenceDate)
+        const startDate = new Date(mostRecentDate)
         startDate.setDate(startDate.getDate() - daysToSubtract)
         return date >= startDate
     })
+
+    console.log("Filtered data:", filteredData);
+    console.log("Filtered data length:", filteredData.length);
+
+    if (isLoading) {
+        return (
+            // <Card className="pt-0">
+            //     <CardHeader>
+            //         <CardTitle>Loading chart data...</CardTitle>
+            //     </CardHeader>
+            // </Card>
+
+            <div className="w-full h-[40%] justify-center items-center">
+
+                <Spinner/>
+            </div>
+        )
+    }
+
+    if (error) {
+        return (
+            <Card className="pt-0">
+                <CardHeader>
+                    <CardTitle>Error loading chart data</CardTitle>
+                    <CardDescription className="text-red-500">
+                        {error?.message || "Failed to load data"}
+                    </CardDescription>
+                </CardHeader>
+            </Card>
+        )
+    }
+
+    // if (!data || !data.data || data.data.length === 0) {
+    //     return (
+    //         <Card className="pt-0">
+    //             <CardHeader>
+    //                 <CardTitle>Total Earning Statistical Show</CardTitle>
+    //                 <CardDescription>
+    //                     No chart data found
+    //                 </CardDescription>
+    //             </CardHeader>
+    //         </Card>
+    //     )
+    // }
 
     return (
         <Card className="pt-0">
             <CardHeader className="flex items-center gap-2 space-y-0 border-b py-5 sm:flex-row">
                 <div className="grid flex-1 gap-1">
-                    <CardTitle>Area Chart - Interactive</CardTitle>
-                    <CardDescription>
-                        Showing total visitors for the last 3 months
+                    <CardTitle>Donations & Offer Redemptions</CardTitle>
+                    <CardDescription className="space-y-2">
+                        <div className="flex items-center gap-2 text-sm">
+                            <Calendar className="h-4 w-4" />
+                            <span>Showing data from {data?.summary?.startDate} to {data?.summary?.endDate}</span>
+                        </div>
+                        <div className="flex items-center gap-4 flex-wrap">
+                            <div className="flex items-center gap-2">
+                                <DollarSign className="h-4 w-4 text-green-600" />
+                                <span className="font-medium">Total Donations:</span>
+                                <span className="font-bold text-green-600">${data?.summary?.totalDonations?.toLocaleString()}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <Gift className="h-4 w-4 text-blue-600" />
+                                <span className="font-medium">Total Redemptions:</span>
+                                <span className="font-bold text-blue-600">{data?.summary?.totalOfferRedemptions?.toLocaleString()}</span>
+                            </div>
+                        </div>
                     </CardDescription>
                 </div>
                 {/* <Select value={timeRange} onValueChange={setTimeRange}>
@@ -189,27 +267,27 @@ export function ChartAreaInteractive() {
                 >
                     <AreaChart data={filteredData}>
                         <defs>
-                            <linearGradient id="fillDesktop" x1="0" y1="0" x2="0" y2="1">
+                            <linearGradient id="fillDonations" x1="0" y1="0" x2="0" y2="1">
                                 <stop
                                     offset="5%"
-                                    stopColor="var(--color-desktop)"
+                                    stopColor="var(--color-donations)"
                                     stopOpacity={0.8}
                                 />
                                 <stop
                                     offset="95%"
-                                    stopColor="var(--color-desktop)"
+                                    stopColor="var(--color-donations)"
                                     stopOpacity={0.1}
                                 />
                             </linearGradient>
-                            <linearGradient id="fillMobile" x1="0" y1="0" x2="0" y2="1">
+                            <linearGradient id="fillOfferRedemptions" x1="0" y1="0" x2="0" y2="1">
                                 <stop
                                     offset="5%"
-                                    stopColor="var(--color-mobile)"
+                                    stopColor="var(--color-offerRedemptions)"
                                     stopOpacity={0.8}
                                 />
                                 <stop
                                     offset="95%"
-                                    stopColor="var(--color-mobile)"
+                                    stopColor="var(--color-offerRedemptions)"
                                     stopOpacity={0.1}
                                 />
                             </linearGradient>
@@ -244,17 +322,17 @@ export function ChartAreaInteractive() {
                             }
                         />
                         <Area
-                            dataKey="mobile"
+                            dataKey="offerRedemptions"
                             type="natural"
-                            fill="url(#fillMobile)"
-                            stroke="var(--color-mobile)"
+                            fill="url(#fillOfferRedemptions)"
+                            stroke="var(--color-offerRedemptions)"
                             stackId="a"
                         />
                         <Area
-                            dataKey="desktop"
+                            dataKey="donations"
                             type="natural"
-                            fill="url(#fillDesktop)"
-                            stroke="var(--color-desktop)"
+                            fill="url(#fillDonations)"
+                            stroke="var(--color-donations)"
                             stackId="a"
                         />
                         <ChartLegend content={<ChartLegendContent />} />
