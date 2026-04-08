@@ -23,30 +23,30 @@ import {
 import Headder from '@/components/dashbord/headder'
 import Offercomp from '@/components/offer compo/offercomp'
 import DashNavi from '@/components/dashbord/dashNavi'
+
 import axiosClient from '@/lib/api/axios-client'
 import { Spinner } from '@/components/ui/spinner';
-import Tabel from '@/components/tabel/tabel';
-
+import Tabel from './tabel/tabel';
 
 
 const ENDPOINTS: Record<string, string> = {
-    "All project": "/api/csr-project",
-    "Not Approved": "/api/csr-project/status/deactivated",
-    "Approved": "/api/csr-project/status/activated",
+    "All User": "/auth/getAllUsers",
+    "All Business": "/auth/getAllBusinesses",
+    "All Organizations": "/auth/getAllOrganizers",
 }
 
-const fetchProjects = async (type: string) => {
-    const endpoint = ENDPOINTS[type] || ENDPOINTS["All project"]
+const fetchUsers = async (type: string) => {
+    const endpoint = ENDPOINTS[type] || ENDPOINTS["All User"]
     const res = await axiosClient.get(endpoint)
     return res.data
 }
 
 const page = () => {
-    const [selectedType, setSelectedType] = useState<string>("All project")
+    const [selectedType, setSelectedType] = useState<string>("All User")
 
     const { data, isLoading, error } = useQuery({
-        queryKey: ['projects', selectedType],
-        queryFn: () => fetchProjects(selectedType),
+        queryKey: ['users', selectedType],
+        queryFn: () => fetchUsers(selectedType),
         // keepPreviousData: true,
     })
 
@@ -70,28 +70,28 @@ const page = () => {
 
                             <div className='flex w-[calc(100vw-110px)]  md:flex-row flex-col md:w-full md:justify-between md:items-center border-b pb-8'>
                                 <div className='flex flex-col w-fit'>
-                                    <h2 className='text-2xl font-bold'>Created Projects</h2>
+                                    <h2 className='text-2xl font-bold'>Created Users</h2>
                                     <p>Redeem your star points for exciting offers!</p>
                                 </div>
                                 <Select value={selectedType} onValueChange={setSelectedType}>
                                     <SelectTrigger className="w-[200px]">
-                                        <SelectValue placeholder="Select Project Type" />
+                                        <SelectValue placeholder="Select User Type" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="All project">All Project</SelectItem>
-                                        <SelectItem value="Not Approved">Not Approved</SelectItem>
-                                        <SelectItem value="Approved">Approved</SelectItem>
+                                        <SelectItem value="All User">All User</SelectItem>
+                                        <SelectItem value="All Business">All Business</SelectItem>
+                                        <SelectItem value="All Organizations">All Organizations</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
 
 
-                            {/* projects show case with with tabele */}
+                            {/* users show case with with tabele */}
                             <div className='w-[calc(100vw-110px)] md:w-full overflow-x-auto pb-2'>
                                 <div className='min-w-[800px]'>
                                     {/* {JSON.stringify(data)} */}
                                     {isLoading && <div className='flex w-full h-[500px] justify-center items-center'><Spinner/></div>}
-                                    {error && <div>Error loading projects</div>}
+                                    {error && <div>Error loading users</div>}
                                     {!isLoading && !error && <Tabel data={data} />}
                                 </div>
                             </div>

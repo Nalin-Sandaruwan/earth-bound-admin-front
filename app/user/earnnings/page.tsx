@@ -1,4 +1,4 @@
-
+"use client"
 
 import React from 'react'
 import {
@@ -13,11 +13,17 @@ import {
 import Headder from '@/components/dashbord/headder'
 import DashNavi from '@/components/dashbord/dashNavi'
 import HistoryCard from '@/components/histry compo/historycard'
+import { Button } from '@/components/ui/button'
+import ViewChart from '@/components/earnning/viewchart'
+import { useEarnByCSR } from '@/lib/hooks/useEarnByCSR'
+import { Spinner } from '@/components/ui/spinner'
 
 
 
 
 const page = () => {
+
+  const { data,isPending, isError } = useEarnByCSR();
   return (
     <div>
       {/* <Navigation /> */}
@@ -35,20 +41,47 @@ const page = () => {
 
           <div className='flex flex-col border-l p-6 font-raleway justify-between'>
             <div className='flex  flex-col '>
-              <h2 className='text-2xl font-bold'>Your Donation History</h2>
-              <p>Redeem your star points for exciting offers!</p>
+              <div className='flex  flex-row justify-between items-center '>
+                <div className='flex flex-col'>
+                  <h2 className='text-2xl font-bold'>Donations</h2>
+                  <p>Donations</p>
+                </div>
+
+                <ViewChart/>
+                
+              </div>
+
+              <div>
+
+              </div>
               {/* Add your redeem offer content here */}
               <div className='w-full md:grid-cols-3 grid-cols-1 grid gap-4 my-6'>
-                <HistoryCard />
-                <HistoryCard />
-                <HistoryCard />
-                <HistoryCard />
-                <HistoryCard />
-                <HistoryCard />
-                <HistoryCard />
-                <HistoryCard />
-                <HistoryCard />
-
+                {isPending ? (
+                  <div className='col-span-3 flex justify-center items-center py-8'>
+                    <Spinner />
+                  </div>
+                ) : isError ? (
+                  <div className='col-span-3 text-center py-8 text-red-500'>
+                    Error loading earnings data
+                  </div>
+                ) : data && data.length > 0 ? (
+                  data.map((item: any) => (
+                    <HistoryCard
+                      key={item.csrId}
+                      csrId={item.csrId}
+                      name={item.name}
+                      description={item.description}
+                      startDate={item.startDate}
+                      endDate={item.endDate}
+                      isApproved={item.isApproved}
+                      totalAmount={item.totalAmount}
+                    />
+                  ))
+                ) : (
+                  <div className='col-span-3 text-center py-8 text-gray-500'>
+                    No earnings data found
+                  </div>
+                )}
               </div>
             </div>
             <div className='flex mb-20'>
@@ -77,9 +110,6 @@ const page = () => {
                 </PaginationContent>
               </Pagination>
             </div>
-
-
-
           </div>
         </div>
       </div>
